@@ -1,0 +1,13 @@
+{
+	"name": "CommentsPlease",
+	"version": "0.0.1",
+	"manifest_version": 3,
+	"description": "Extension that repositions your belowed youtube comments.",
+	"developer": "marcin228",
+	"content_scripts": [
+		{
+			"matches": ["https://www.youtube.com/*", "http://www.youtube.com/*", "https://youtube.com/*", "http://youtube.com/*"],
+			"js": ["CommentsPlease.js"]
+		}
+	]
+}
