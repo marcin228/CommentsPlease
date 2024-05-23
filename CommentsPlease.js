@@ -1,10 +1,20 @@
 let timer = null;
 
+const elementsAreDefined(arr){
+
+	const l = arr.length;
+	for(let i = 0; i < l; i++)
+		if(arr[i] === undefined)
+			return false;
+	
+	return true;
+}
+
 const reposition = function(){
 	
 	const urlParams = new URLSearchParams(window.location.search);
 	const videoParam = urlParams.get('v');
-	
+
 	if(videoParam && videoParam.length > 0){
 
 		const player = document.querySelectorAll('#player-full-bleed-container')[0];
@@ -16,7 +26,9 @@ const reposition = function(){
 		const leftChildElement2 = document.querySelectorAll('#secondary-inner')[0];
 		const fixSubscribe = document.querySelectorAll('ytd-watch-grid[is-two-columns_]:not([swatcheroo-binary-layout]) #secondary-inner.ytd-watch-grid')[0];
 
-		if(!player && !wrapper && !left && !right && !wrapperInnerPlacement && !leftChildElement1 && !leftChildElement2 && !fixSubscribe){
+		const elements = [player, wrapper, left, right, wrapperInnerPlacement, leftChildElement1, leftChildElement2, fixSubscribe];
+
+		if(elementsAreDefined(elements)){
 			
 			clearTimeout(timer);
 			timer = setTimeout(reposition, 100);
