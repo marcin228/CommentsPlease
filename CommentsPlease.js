@@ -1,6 +1,6 @@
 let timer = null;
 
-const elementsAreDefined(arr){
+const elementsAreDefined = function(arr){
 
 	const l = arr.length;
 	for(let i = 0; i < l; i++)
