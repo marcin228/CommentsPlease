@@ -9,7 +9,7 @@ const elementsAreDefined = function(arr){
 
 	const l = arr.length;
 	for(let i = 0; i < l; i++)
-		if(arr[i] === undefined)
+		if(arr[i].ref === undefined)
 			return false;
 	
 	return true;
@@ -23,32 +23,44 @@ const checkResolution = function(){
 	return [screenWidth, screenHeight];
 }
 
-const saveInitialValues = function(){
-
-	
-}
-
 const reposition = function(){
 	
 	const urlParams = new URLSearchParams(window.location.search);
 	const videoParam = urlParams.get('v');
 
+	const elements = [];
+
+	// player
+	elements[elements.length] = new YTElement('#player-full-bleed-container', {'height': 'calc(100vh - 56px)', 'maxHeight': 'none'});
+
+	// wrapper
+	elements[elements.length] = new YTElement('#columns', {'display': 'block', 'position': 'relative'});
+
+	// wrapperInnerPlacement
+	elements[elements.length] = new YTElement('#columns.ytd-watch-grid', {'display': 'revert'});
+
+	// left
+	elements[elements.length] = new YTElement('#primary', {'display': 'block !important', 'overflow': 'hidden', 'width': '100%', 'maxHeight': '280px'});
+
+	// right
+	elements[elements.length] = new YTElement('#secondary');
+	
+	// leftChildElement1
+	elements[elements.length] = new YTElement('#secondary.ytd-watch-grid', {'width': '100%', 'minWidth': 'auto', 'boxSizing': 'border-box', 'flex': '1', 'padding': '2vw 4vw'});
+	
+	// leftChildElement2
+	elements[elements.length] = new YTElement('#secondary-inner', {});
+	
+	// fixSubscribe
+	elements[elements.length] = new YTElement('ytd-watch-grid[is-two-columns_]:not([swatcheroo-binary-layout]) #secondary-inner.ytd-watch-grid', { 'position': 'relative' });
+
 	if(checkResolution()[0] > largeBreakpoint){
 		if(videoParam && videoParam.length > 0){
 
-			const player = document.querySelectorAll('#player-full-bleed-container')[0];
-			const wrapper = document.querySelectorAll('#columns')[0];
-			const wrapperInnerPlacement = document.querySelectorAll('#columns.ytd-watch-grid')[0];
-			const left = document.querySelectorAll('#primary')[0];
-			const right = document.querySelectorAll('#secondary')[0];
-			const leftChildElement1 = document.querySelectorAll('#secondary.ytd-watch-grid')[0];
-			const leftChildElement2 = document.querySelectorAll('#secondary-inner')[0];
-			const fixSubscribe = document.querySelectorAll('ytd-watch-grid[is-two-columns_]:not([swatcheroo-binary-layout]) #secondary-inner.ytd-watch-grid')[0];
-
-			const elements = [player, wrapper, left, right, wrapperInnerPlacement, leftChildElement1, leftChildElement2, fixSubscribe];
-
 			if(elementsAreDefined(elements)){
-	
+
+				elements.forEach(el => el.saveInitialValues());
+				elements.forEach(el => el.applyChanges());
 				clearTimeout(timer);
 			}
 			else{
@@ -63,29 +75,12 @@ const reposition = function(){
 				timer = setTimeout(reposition, repositionRetryIntervalLimit);
 				repositionRetryCount++;
 			}
-			
-			leftChildElement2.style.position = 'relative';
-
-			player.style.height = 'calc(100vh - 56px)';
-			player.style.maxHeight = 'none';
-			
-			wrapper.style.display = 'block';
-			wrapper.style.position = 'relative';
-			
-			left.style.display = 'block !important';
-			left.style.overflow = 'hidden';	
-			left.style.width = '100%';	
-			left.style.maxHeight = '280px';	
-
-			leftChildElement1.style.width = '100%';
-			leftChildElement1.style.minWidth = 'auto';
-			leftChildElement1.style.boxSizing = 'border-box';
-			leftChildElement1.style.flex = '1';
-			leftChildElement1.style.padding = '2vw 4vw';
-
-			fixSubscribe.style.position = 'relative';
-			wrapperInnerPlacement.style.display = 'revert';
 		}
+	}
+	else{
+
+		if(elementsAreDefined(elements))
+			elements.forEach(el => el.restoreInitialValues());
 	}
 };
 
@@ -98,3 +93,31 @@ const onLoadHandler = function(e){
 window.addEventListener('load', onLoadHandler);
 window.addEventListener('popstate', onLoadHandler);
 window.addEventListener('resize', onLoadHandler);
+
+class YTElement{
+
+    constructor(selectionQuery, changedProperties){
+
+        this.ref = document.querySelectorAll(selectionQuery)[0];
+        this.state = {};
+        this.changedProperties = changedProperties;
+    }
+
+    applyChanges(){
+
+        for(let key in this.changedProperties)
+            this.ref.style[key] = this.changedProperties[key];
+    }
+
+	restoreInitialValues(){
+
+		for(let key in this.changedProperties)
+            this.ref.style[key] = this.state[key];
+	}
+
+    saveInitialValues(){
+    
+		for(let key in this.changedProperties)
+            this.state[key] = this.ref.style[key];
+    }
+}
