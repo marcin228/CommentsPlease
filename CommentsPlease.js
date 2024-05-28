@@ -23,12 +23,15 @@ const checkResolution = function(){
 	return [screenWidth, screenHeight];
 }
 
+const saveInitialValues = function(){
+
+	
+}
+
 const reposition = function(){
 	
 	const urlParams = new URLSearchParams(window.location.search);
 	const videoParam = urlParams.get('v');
-
-	console.log(checkResolution());
 
 	if(checkResolution()[0] > largeBreakpoint){
 		if(videoParam && videoParam.length > 0){
