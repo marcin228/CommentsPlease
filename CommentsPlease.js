@@ -23,36 +23,40 @@ const checkResolution = function(){
 	return [screenWidth, screenHeight];
 }
 
+const initializeElements = function(arr){
+
+	// player
+	arr[arr.length] = new YTElement('#player-full-bleed-container', {'height': 'calc(100vh - 56px)', 'maxHeight': 'none'});
+
+	// wrapper
+	arr[arr.length] = new YTElement('#columns', {'display': 'block', 'position': 'relative'});
+
+	// wrapperInnerPlacement
+	arr[arr.length] = new YTElement('#columns.ytd-watch-grid', {'display': 'revert'});
+
+	// left
+	arr[arr.length] = new YTElement('#primary', {'display': 'block !important', 'overflow': 'hidden', 'width': '100%', 'maxHeight': '280px'});
+
+	// right
+	arr[arr.length] = new YTElement('#secondary');
+	
+	// leftChildElement1
+	arr[arr.length] = new YTElement('#secondary.ytd-watch-grid', {'width': '100%', 'minWidth': 'auto', 'boxSizing': 'border-box', 'flex': '1', 'padding': '2vw 4vw'});
+	
+	// leftChildElement2
+	arr[arr.length] = new YTElement('#secondary-inner', {});
+	
+	// fixSubscribe
+	arr[arr.length] = new YTElement('ytd-watch-grid[is-two-columns_]:not([swatcheroo-binary-layout]) #secondary-inner.ytd-watch-grid', { 'position': 'relative' });
+}
+
 const reposition = function(){
 	
 	const urlParams = new URLSearchParams(window.location.search);
 	const videoParam = urlParams.get('v');
-
 	const elements = [];
 
-	// player
-	elements[elements.length] = new YTElement('#player-full-bleed-container', {'height': 'calc(100vh - 56px)', 'maxHeight': 'none'});
-
-	// wrapper
-	elements[elements.length] = new YTElement('#columns', {'display': 'block', 'position': 'relative'});
-
-	// wrapperInnerPlacement
-	elements[elements.length] = new YTElement('#columns.ytd-watch-grid', {'display': 'revert'});
-
-	// left
-	elements[elements.length] = new YTElement('#primary', {'display': 'block !important', 'overflow': 'hidden', 'width': '100%', 'maxHeight': '280px'});
-
-	// right
-	elements[elements.length] = new YTElement('#secondary');
-	
-	// leftChildElement1
-	elements[elements.length] = new YTElement('#secondary.ytd-watch-grid', {'width': '100%', 'minWidth': 'auto', 'boxSizing': 'border-box', 'flex': '1', 'padding': '2vw 4vw'});
-	
-	// leftChildElement2
-	elements[elements.length] = new YTElement('#secondary-inner', {});
-	
-	// fixSubscribe
-	elements[elements.length] = new YTElement('ytd-watch-grid[is-two-columns_]:not([swatcheroo-binary-layout]) #secondary-inner.ytd-watch-grid', { 'position': 'relative' });
+	initializeElements(elements);
 
 	if(checkResolution()[0] > largeBreakpoint){
 		if(videoParam && videoParam.length > 0){
